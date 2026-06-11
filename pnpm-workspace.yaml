@@ -1,5 +1,7 @@
 allowBuilds:
-  '@firebase/util': true
-  esbuild: set this to true or false
-  protobufjs: true
-onlyBuiltDependencies: esbuild
+  '0': '@firebase/util'
+  '1': esbuild
+  '2': protobufjs
+
+onlyBuiltDependencies:
+  - esbuild

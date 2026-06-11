@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import FootballIcon from '@/shared/icons/FootballIcon'
 
-const GITHUB_URL = 'https://github.com/braian9'
+const GITHUB_URL: string = `${import.meta.env.VITE_GITHUB}`;
 
 interface IFooterProps {
   variant?: 'public' | 'private'
