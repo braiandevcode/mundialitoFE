@@ -54,9 +54,6 @@ export default function PredictionsPage() {
                       Pendiente
                     </span>
                   )}
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    {new Date(pred.createdAt).toLocaleDateString()}
-                  </p>
                 </div>
               </div>
             </Card>

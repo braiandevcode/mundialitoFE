@@ -12,7 +12,6 @@ import type {
   IRegisterCredentials,
 } from "@/core/types";
 import { env } from "@/core/config";
-import { mockLogin, mockRegister } from "@/core/mocks";
 import { useLocalStorage } from "@/core/hooks";
 import { fetchCurrentUser } from "@/core/api/users";
 import {
@@ -203,39 +202,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login: (credentials: ILoginCredentials) => Promise<void> = useCallback(
     async (credentials: ILoginCredentials) => {
       setIsLoading(true);
+
       try {
-        if (env.useMock) {
-          const response: { user: IUser; token: string } =
-            await mockLogin(credentials);
-          setUser(response.user);
-          setEmailVerified(true);
-          setRoleLoaded(true);
-          setStoredToken(response.token);
-        } else {
-          try {
-            const credential: UserCredential = await loginWithEmail(
-              credentials.email,
-              credentials.password,
-            );
-            if (!credential.user.emailVerified) {
-              await logoutUser();
-              throw new Error("Verificá tu correo antes de iniciar sesión");
-            }
-            const idToken: string = await credential.user.getIdToken();
-            const baseUser: IUser = firebaseUserToIUser(credential.user);
-            try {
-              const fullUser: IUser = await fetchCurrentUser(idToken);
-              setUser({ ...baseUser, ...fullUser });
-            } catch {
-              setUser(baseUser);
-            }
-            setRoleLoaded(true);
-            setEmailVerified(true);
-            setStoredToken(idToken);
-          } catch (err) {
-            throw new Error(getFirebaseErrorMessage(err));
-          }
+        const credential: UserCredential = await loginWithEmail(
+          credentials.email,
+          credentials.password,
+        );
+        if (!credential.user.emailVerified) {
+          await logoutUser();
+          throw new Error("Verificá tu correo antes de iniciar sesión");
         }
+        const idToken: string = await credential.user.getIdToken();
+        const baseUser: IUser = firebaseUserToIUser(credential.user);
+        try {
+          const fullUser: IUser = await fetchCurrentUser(idToken);
+          setUser({ ...baseUser, ...fullUser });
+        } catch {
+          setUser(baseUser);
+        }
+        setRoleLoaded(true);
+        setEmailVerified(true);
+        setStoredToken(idToken);
+      } catch (err) {
+        throw new Error(getFirebaseErrorMessage(err));
       } finally {
         setIsLoading(false);
       }
@@ -247,29 +236,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useCallback(
       async (credentials: IRegisterCredentials) => {
         setIsLoading(true);
+
         try {
-          if (env.useMock) {
-            const response: { user: IUser; token: string } =
-              await mockRegister(credentials);
-            setUser(response.user);
-            setEmailVerified(true);
-            setStoredToken(response.token);
-          } else {
-            try {
-              const credential: UserCredential = await registerWithEmail(
-                credentials.email,
-                credentials.password,
-              );
-              await firebaseSendVerification();
-              await logoutUser();
-              throw new NeedsVerificationError(
-                "Registro exitoso. Revisá tu correo para verificar tu cuenta",
-              );
-            } catch (err) {
-              if (err instanceof NeedsVerificationError) throw err;
-              throw new Error(getFirebaseErrorMessage(err));
-            }
-          }
+          await registerWithEmail(credentials.email, credentials.password);
+          await firebaseSendVerification();
+          await logoutUser();
+          throw new NeedsVerificationError(
+            "Registro exitoso. Revisá tu correo para verificar tu cuenta",
+          );
+        } catch (err) {
+          if (err instanceof NeedsVerificationError) throw err;
+          throw new Error(getFirebaseErrorMessage(err));
         } finally {
           setIsLoading(false);
         }

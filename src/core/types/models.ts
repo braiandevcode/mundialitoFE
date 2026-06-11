@@ -47,7 +47,6 @@ export interface IMatch {
   homeTeamId: string
   awayTeamId: string
   date: string
-  stadium: string
   status: TMatchStatus
   homeScore: number | null
   awayScore: number | null

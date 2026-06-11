@@ -1,4 +1,4 @@
-import type { FirebaseError } from 'firebase/app'
+import { FirebaseError } from 'firebase/app'
 
 export class NeedsVerificationError extends Error {
   constructor(message: string) {

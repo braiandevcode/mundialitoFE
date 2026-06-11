@@ -22,7 +22,6 @@ export interface IBracketSlotWithTeams {
   penaltyHomeScore: number | null
   penaltyAwayScore: number | null
   date: string
-  stadium: string
   label: string
 }
 
@@ -61,7 +60,6 @@ export function getBracketSlotsFromMatches(
       penaltyHomeScore: m.penaltyHomeScore ?? null,
       penaltyAwayScore: m.penaltyAwayScore ?? null,
       date: m.date,
-      stadium: m.stadium,
       label: getRoundLabel(m.round ?? ''),
     }
   })
