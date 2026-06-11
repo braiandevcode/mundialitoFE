@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Bloqeo rutas privadas / de sistema
+Disallow: /api/
+
+Sitemap: https://mundialito.app/sitemap.xml
