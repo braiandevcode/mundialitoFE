@@ -1,6 +1,6 @@
 import { env } from '@/core/config'
 
-const TIMEOUT_MS: number = 15000
+const TIMEOUT_MS: number = 45000
 
 interface IApiResponse<T> {
   success?: boolean
@@ -41,6 +41,20 @@ const parseResponse = <T>(text: string, status: number): IApiResponse<T> | null 
   }
 }
 
+const reportRequestFailure = (error: unknown, method: string, path: string): void => {
+  if (!import.meta.env.DEV) return
+
+  const name: string = error instanceof Error ? error.name : 'UnknownError'
+  const message: string = error instanceof Error ? error.message : 'Unknown request failure'
+
+  console.warn('[httpClient] request failed before receiving an HTTP response', {
+    method,
+    path,
+    name,
+    message,
+  })
+}
+
 async function request<T>(
   method: string,
   path: string,
@@ -72,6 +86,12 @@ async function request<T>(
     }
 
     return json?.data as T
+  } catch (error) {
+    if (!(error instanceof ApiError)) {
+      reportRequestFailure(error, method, path)
+    }
+
+    throw error
   } finally {
     clearTimeout(timer)
   }
