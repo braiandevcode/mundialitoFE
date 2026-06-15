@@ -68,10 +68,7 @@ export default function FAQPage() {
 
         <div className="space-y-3">
           {faqs.map((faq) => (
-            <details
-              key={faq.q}
-              className="group bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-700 overflow-hidden transition-all"
-            >
+            <details key={faq.q} className="group bg-white dark:bg-neutral-900 rounded-xl border border-slate-200 dark:border-neutral-700 overflow-hidden transition-all">
               <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm sm:text-base font-medium text-slate-800 dark:text-neutral-200 hover:bg-slate-50 dark:hover:bg-neutral-800/50 transition-colors list-none">
                 {faq.q}
                 <svg
